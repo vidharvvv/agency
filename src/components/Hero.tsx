@@ -11,7 +11,7 @@ export const Hero: React.FC = () => {
   
   // Mouse position state with Lerp Physics for silky smooth inertia
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000, targetX: 0, targetY: 0 });
-  const [isNearBuzz, setIsNearBuzz] = useState(false);
+
 
   // Track scroll progress throughout container
   const { scrollYProgress } = useScroll({
@@ -56,17 +56,13 @@ export const Hero: React.FC = () => {
       const centerY = window.innerHeight / 2;
       targetX = (e.clientX - centerX) / centerX;
       targetY = (e.clientY - centerY) / centerY;
-
-      if (buzzRef.current) {
-        const rect = buzzRef.current.getBoundingClientRect();
-        const dist = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
-        setIsNearBuzz(dist < 300);
-      }
     };
 
+
     const animateMouse = () => {
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+
       
       setMousePos((prev) => ({
         ...prev,
@@ -110,13 +106,12 @@ export const Hero: React.FC = () => {
       ref={containerRef}
       className="relative min-h-screen py-16 bg-[#090A0F] text-[#F8F9FA] bg-noise flex flex-col justify-between overflow-hidden perspective-[1200px]"
     >
-      {/* MOUSE LIGHT: Radial Teal Gradient following cursor */}
+      {/* MOUSE LIGHT: Radial Teal Gradient following cursor — absolute avoids full-page repaint */}
       <div
-        className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-700 ease-out"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(${isNearBuzz ? '750px' : '550px'} circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 245, 212, ${
-            isNearBuzz ? 0.18 : 0.1
-          }), transparent 80%)`,
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 245, 212, 0.1), transparent 75%)`,
+          willChange: 'background',
         }}
       />
 

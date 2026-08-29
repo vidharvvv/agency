@@ -23,12 +23,13 @@ export function App() {
   useEffect(() => {
     // Initialize Lenis award-winning silky smooth scrolling physics
     const lenis = new Lenis({
-      duration: 1.5,
-      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+      duration: 1.1,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -8 * t)),
       smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.1,
+      touchMultiplier: 1.8,
     });
+
 
     function raf(time: number) {
       lenis.raf(time);
