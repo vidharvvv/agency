@@ -12,11 +12,12 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
 
   // Smooth spring physics for revolving circle inertia
   const smoothProgress = useSpring(scrollProgress, {
-    stiffness: 45,
-    damping: 18,
-    mass: 0.25,
-    restDelta: 0.0005,
+    stiffness: 30,
+    damping: 24,
+    mass: 0.2,
+    restDelta: 0.0001,
   });
+
 
   // 7 Flagship projects placed in 3D Circular Orbit
   const reelCards = [

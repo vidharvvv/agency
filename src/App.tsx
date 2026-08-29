@@ -21,11 +21,13 @@ import { Footer } from './components/Footer';
 
 export function App() {
   useEffect(() => {
-    // Initialize Lenis award-winning smooth scrolling physics
+    // Initialize Lenis award-winning silky smooth scrolling physics
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.5,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.5,
     });
 
     function raf(time: number) {
@@ -41,7 +43,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#080909] text-[#F4F0E6] selection:bg-[#E06B32] selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#090A0F] text-[#F8F9FA] selection:bg-[#00F5D4] selection:text-[#090A0F] font-sans antialiased overflow-x-hidden">
       {/* Top Scroll Indicator */}
       <ScrollProgress />
 
