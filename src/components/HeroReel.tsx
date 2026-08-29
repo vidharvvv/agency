@@ -10,14 +10,13 @@ interface HeroReelProps {
 export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProject }) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // Smooth spring physics for revolving circle inertia
+  // Fast GPU responsive spring physics for 60fps revolving wheel
   const smoothProgress = useSpring(scrollProgress, {
-    stiffness: 30,
-    damping: 24,
-    mass: 0.2,
+    stiffness: 70,
+    damping: 26,
+    mass: 0.1,
     restDelta: 0.0001,
   });
-
 
   // 7 Flagship projects placed in 3D Circular Orbit
   const reelCards = [
@@ -73,23 +72,19 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
   ];
 
   const totalCards = reelCards.length;
-  const circleRadius = 460; // 3D Circle Radius in pixels
+  const circleRadius = 440; // 3D Circle Radius in pixels
 
   return (
     <div className="relative w-full py-12 mb-12 md:mb-16 overflow-visible perspective-[1400px] select-none z-20">
       {/* 3D Revolving Circle Gallery Container */}
-
-
       <motion.div
         style={{ transformStyle: 'preserve-3d' }}
         className="flex items-center justify-center min-h-[420px] sm:min-h-[480px] md:min-h-[540px] transform-style-3d relative"
       >
-
         {reelCards.map((card, index) => {
           const isHovered = hoveredId === card.id;
 
           // Compute angle around 3D revolving circle
-          // Base angle + scroll rotation
           const cardAngle = useTransform(
             smoothProgress,
             [0, 1],
@@ -99,19 +94,11 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
             ]
           );
 
-          // 3D Circular Orbit X coordinate: sin(angle) * radius
+          // 3D Circular Orbit Coordinates
           const cardX = useTransform(cardAngle, (angle) => Math.sin(angle) * circleRadius);
-
-          // 3D Circular Orbit Z coordinate: cos(angle) * radius
           const cardZ = useTransform(cardAngle, (angle) => Math.cos(angle) * circleRadius - 100);
-
-          // 3D Circular Orbit RotateY angle: turns along wheel circumference
           const cardRotateY = useTransform(cardAngle, (angle) => (angle * 180) / Math.PI);
-
-          // Scale: Front cards closest to viewer (cos > 0) are enlarged 1.1x, back cards scaled down
           const cardScale = useTransform(cardAngle, (angle) => 0.82 + (Math.cos(angle) + 1) * 0.14);
-
-          // Opacity: back cards fade smoothly into space
           const cardOpacity = useTransform(cardAngle, (angle) => 0.5 + (Math.cos(angle) + 1) * 0.25);
 
           return (
@@ -121,12 +108,13 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
                 x: cardX,
                 z: isHovered ? 260 : cardZ,
                 rotateY: cardRotateY,
-                scale: isHovered ? 1.3 : cardScale,
+                scale: isHovered ? 1.28 : cardScale,
                 opacity: cardOpacity,
                 cursor: 'pointer',
+                willChange: 'transform, opacity',
               }}
               animate={{
-                y: isHovered ? -20 : [0, index % 2 === 0 ? -12 : -16, 0],
+                y: isHovered ? -16 : [0, index % 2 === 0 ? -10 : -14, 0],
               }}
               transition={{
                 y: isHovered
@@ -136,10 +124,10 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
               onMouseEnter={() => setHoveredId(card.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => onSelectProject && onSelectProject(card.id)}
-              className={`absolute w-[220px] sm:w-[270px] md:w-[310px] h-[320px] sm:h-[380px] md:h-[430px] rounded-2xl p-6 flex flex-col justify-between border cursor-pointer transition-all duration-300 shadow-2xl bg-gradient-to-b ${card.gradient} ${
+              className={`absolute w-[220px] sm:w-[270px] md:w-[310px] h-[320px] sm:h-[380px] md:h-[430px] rounded-2xl p-6 flex flex-col justify-between border cursor-pointer transition-colors duration-200 shadow-xl bg-[#0F172A] bg-gradient-to-b ${card.gradient} ${
                 isHovered
-                  ? 'border-[#00F5D4] shadow-[0_0_60px_rgba(0,245,212,0.6)] z-50 ring-2 ring-[#00F5D4]'
-                  : 'border-[#334155]/80 backdrop-blur-xl opacity-90 hover:opacity-100 z-10'
+                  ? 'border-[#00F5D4] shadow-[0_0_45px_rgba(0,245,212,0.5)] z-50 ring-2 ring-[#00F5D4]'
+                  : 'border-[#334155] opacity-90 hover:opacity-100 z-10'
               }`}
               data-cursor="view"
               data-cursor-label="VIEW"
@@ -149,14 +137,14 @@ export const HeroReel: React.FC<HeroReelProps> = ({ scrollProgress, onSelectProj
                 <span className="shadcn-badge">
                   {card.category}
                 </span>
-                <div className="w-8 h-8 rounded-full bg-[#090A0F]/60 backdrop-blur-md text-[#F8F9FA] flex items-center justify-center group-hover:bg-[#00F5D4] group-hover:text-[#090A0F] transition-colors border border-white/10">
+                <div className="w-8 h-8 rounded-full bg-[#090A0F]/80 text-[#F8F9FA] flex items-center justify-center group-hover:bg-[#00F5D4] group-hover:text-[#090A0F] transition-colors border border-white/10">
                   <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                 </div>
               </div>
 
               {/* Center Abstract Graphic Motif */}
               <div className="relative z-10 my-auto flex justify-center">
-                <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center bg-[#0F172A]/50 backdrop-blur-md group-hover:border-[#00F5D4] group-hover:scale-110 transition-all duration-300">
+                <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center bg-[#090A0F]/60 group-hover:border-[#00F5D4] group-hover:scale-110 transition-transform duration-200">
                   <Sparkles className="w-7 h-7 text-[#00F5D4]" />
                 </div>
               </div>
